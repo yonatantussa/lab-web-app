@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Power Control{% endblock %}
+
+{% block content %}
+<style>
+    /* Global styles */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background-image: url('/static/background.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+    /* Container for relay boxes */
+    .relay-container {
+        margin: 20px;
+    }
+    /* Styles for each relay box */
+    .relay-box {
+        background-color: rgba(17, 27, 71, 1);
+        color: white;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 10px;
+        position: relative;
+        z-index: 1;
+    }
+    /* Toggle switch styles */
+    .toggle-switch {
+        position: relative;
+        width: 60px;
+        height: 34px;
+    }
+
+    .toggle-switch input[type="checkbox"] {
+        display: none;
+    }
+
+    .toggle-switch label {
+        background-color: #ccc;
+        border-radius: 34px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        display: block;
+        height: 100%;
+        position: relative;
+        width: 100%;
+    }
+
+    .toggle-switch label::after {
+        background-color: white;
+        border-radius: 50%;
+        content: "";
+        height: 30px;
+        left: 2px;
+        position: absolute;
+        top: 2px;
+        transition: transform 0.2s;
+        width: 30px;
+    }
+
+    .toggle-switch input[type="checkbox"]:checked + label {
+        background-color: #4caf50;
+    }
+
+    .toggle-switch input[type="checkbox"]:checked + label::after {
+        transform: translateX(26px);
+    }
+
+    /* Desktop styles */
+    @media only screen and (min-width: 600px) {
+        /* For desktops and laptops */
+        .background-image {
+            background-image: none;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .relay-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .relay-box {
+            background-color: rgba(17, 27, 71, 1);
+            color: white;
+            padding: 10px;
+            margin: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            width: calc(33.33% - 20px);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 34px;
+        }
+    }
+</style>
+
+<!-- Container for relays with toggle switches -->
+<div class="relay-container">
+    {% for index, row in relay_df.iterrows() %}
+        {% if row['Name'] != 'N/A' and 'Relay' not in row['Name'] and 'Outlet' not in row['Name']%}
+            <div class="relay-box">
+                <p>{{ row['Name'] }}</p>
+                <form action="{{ url_for('views.change_relay_state') }}" method="post" class="relay-form">
+                    <input type="hidden" name="base_url" value="{{ row['Device IP'] }}">
+                    <input type="hidden" name="relay_number" value="{{ row['Relay Number'] }}">
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="switch{{ row['Device IP'] }}_{{ row['Relay Number'] }}" name="state" {% if row['State'] %}checked{% endif %} />
+                        <label for="switch{{ row['Device IP'] }}_{{ row['Relay Number'] }}"></label>
+                    </div>
+                    <button type="submit" style="display: none;"></button>
+                </form>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+<script>
+    // Auto-submit form when toggle switch is changed
+    document.querySelectorAll('.toggle-switch input[type="checkbox"]').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            this.closest('form').submit();
+        });
+    });
+    // Refresh the page every 60 seconds
+    setInterval(function(){
+        location.reload();
+    }, 60000);
+</script>
+<script>
+    // Function to update relay information periodically
+    function updateRelayInfo() {
+        $.ajax({
+            url: '/update_relay_info',  // Flask route to update relay info
+            type: 'GET',
+            success: function(response) {
+                console.log('Relay info updated.');
+                // Optionally update the UI with new data
+            },
+            error: function(error) {
+                console.error('Error updating relay info:', error);
+            }
+        });
+    }
+
+    // Periodically refresh relay information every 30 seconds (adjust as needed)
+    setInterval(updateRelayInfo, 30000);
+</script>
+{% endblock %}

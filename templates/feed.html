@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Video Feed{% endblock %}
+
+{% block content %}
+<style>
+    /* Global styles */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background-image: url('/static/background.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    /* Video grid container */
+    .video-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        padding: 20px;
+    }
+
+    /* Styles for each video feed container */
+    .video-feed {
+        position: relative;
+        background-color: rgba(17, 27, 71, 0.8);
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        cursor: pointer; /* Add cursor pointer to indicate clickability */
+        overflow: hidden; /* Ensure overflow is hidden to contain child elements */
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    }
+
+    /* Adustments for loaded video feeds */
+    .video-feed.loaded {
+        padding-bottom: 10px; /* Remove padding-bottom once loaded */
+    }
+
+    /* Styles for video or image elements inside video feeds */
+    .video-feed img, .video-feed video {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        display: none; /* Initially hide images and videos */
+    }
+
+    /* Placeholder and spinner for loading state */
+    .placeholder {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .spinner {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid white;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+    }
+
+    /* Fullscreen styles */
+    .fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .fullscreen img, .fullscreen video {
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 10px;
+    }
+
+    /* Close button for fullscreen view */
+    .close-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 30px;
+        color: white;
+        cursor: pointer;
+    }
+
+    /* Animation for loading spinner */
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Mobile responsive styles */
+    @media (max-width: 600px) {
+        body {
+            background-size: auto;
+        }
+
+        .video-grid {
+            grid-template-columns: 1fr; /* Single column layout for mobile */
+        }
+    }
+
+    /* Tablet responsive styles */
+    @media (max-width: 1400px) and (min-width: 600px) {
+        .video-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Video grid to display video feeds -->
+<div class="video-grid">
+    <!-- Individual video feed container -->
+    <div class="video-feed" data-camera="1">
+        <div class="placeholder">
+            <div class="spinner"></div>
+        </div>
+        <img id="camera1" src="" onclick="openFullscreen('camera1')">
+    </div>
+    <div class="video-feed" data-camera="2">
+        <div class="placeholder">
+            <div class="spinner"></div>
+        </div>
+        <img id="camera2" src="" onclick="openFullscreen('camera2')">
+    </div>
+</div>
+
+<!-- Fullscreen container to display fullscreen video/image -->
+<div id="fullscreen-container" class="fullscreen" style="display: none;">
+    <span class="close-btn" onclick="closeFullscreen()">&times;</span>
+    <img id="fullscreen-image" src="">
+    <video id="fullscreen-video" controls style="display: none;">
+        <source src="">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<script>
+    // URLs for video feeds
+    const videoFeedUrls = {
+        camera1: "{{ url_for('views.video_feed', camera=1) }}",
+        camera2: "{{ url_for('views.video_feed', camera=2) }}",
+    };
+
+    /**
+     * Function to open the fullscreen view for an element
+     * @param {string} elementId - The ID of the element to be shown in fullscreen
+     */
+    function openFullscreen(elementId) {
+        const element = document.getElementById(elementId);
+        const fullscreenContainer = document.getElementById('fullscreen-container');
+        const fullscreenImage = document.getElementById('fullscreen-image');
+        const fullscreenVideo = document.getElementById('fullscreen-video');
+
+        if (element.tagName === 'IMG') {
+            fullscreenImage.src = element.src;
+            fullscreenImage.style.display = 'block';
+            fullscreenVideo.style.display = 'none';
+        } else if (element.tagName === 'VIDEO') {
+            fullscreenVideo.src = element.querySelector('source').src;
+            fullscreenVideo.style.display = 'block';
+            fullscreenImage.style.display = 'none';
+        }
+
+        fullscreenContainer.style.display = 'flex';
+    }
+
+    /**
+     * Function to close the fullscreen view
+     */
+    function closeFullscreen() {
+        const fullscreenContainer = document.getElementById('fullscreen-container');
+        fullscreenContainer.style.display = 'none';
+        const fullscreenVideo = document.getElementById('fullscreen-video');
+        fullscreenVideo.pause(); // Pause video when closing fullscreen
+    }
+
+    /**
+     * Function to load video feed for a specific camera
+     * @param {string} cameraNumber - The camera number to load
+     */
+    function loadVideoFeed(cameraNumber) {
+        const feedContainer = document.querySelector(`.video-feed[data-camera="${cameraNumber}"]`);
+        const imgElement = feedContainer.querySelector('img');
+        const placeholder = feedContainer.querySelector('.placeholder');
+        
+        imgElement.onload = function() {
+            placeholder.style.display = 'none';
+            imgElement.style.display = 'block';
+            feedContainer.classList.add('loaded'); // Add loaded class to remove padding-bottom
+        };
+
+        imgElement.onerror = function() {
+            // Handle error, e.g., show alternative content or retry loading
+            console.error(`Failed to load image for camera ${cameraNumber}`);
+        };
+
+        imgElement.src = videoFeedUrls[`camera${cameraNumber}`];
+    }
+
+    // Load video feeds when the page is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        loadVideoFeed(1);
+        loadVideoFeed(2);
+    });
+</script>
+
+{% endblock %}

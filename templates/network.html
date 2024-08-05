@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Network{% endblock %}
+
+{% block content %}
+<style>
+    /* Basic body styling */
+    body {
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background-image: url('/static/background.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    /* Styling for the container holding the device list*/
+    .device-list {
+        margin: 20px;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+    }
+
+    .device-list h2 {
+        text-align: center;
+    }
+
+    /* Remove default list styling and padding */
+    .device-list ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    /* Individual device item styling */
+    .device-list li {
+        padding: 10px;
+        margin: 5px 0;
+        background-color: #f4f4f4;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* Change background color on hover */
+    .device-list li:hover {
+        background-color: #e0e0e0;
+    }
+
+    /* Flex container for device information */
+    .device-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .device-details {
+        margin-right: 20px;
+    }
+
+    /* Link styling within device items */
+    .device-list a {
+        text-decoration: none;
+        color: #333;
+        display: block;
+    }
+
+    /* Margin reset for headers and paragraphs in device info */
+    .device-info h3,
+    .device-info p {
+        margin: 0;
+    }
+
+    /* Container for status icons and buttons */
+    .status-container {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Response time text styling */
+    .response-time {
+        text-transform: none;
+        font-size: 14px;
+    }
+
+    /* Status icon styling */
+    .status-icon {
+        font-size: 20px;
+        margin-left: 10px;
+    }
+
+    /* Color coding for status icons */
+    .status-icon.reachable {
+        color: green;
+    }
+
+    .status-icon.unreachable {
+        color: red;
+    }
+
+    /* Ping button styling */
+    .ping-button {
+        margin-left: 10px;
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    /* Change background color on hover */
+    .ping-button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Container for filter options and last refreshed time */
+    .filter-refresh-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    /* Styling for filter dropdown and button */
+    .filter select,
+    .filter button {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-family: 'Poppins', sans-serif;
+        background-color: #fff;
+        color: #333;
+        cursor: pointer;
+    }
+
+    .filter select {
+        margin-right: 10px;
+    }
+
+    .filter button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        margin-left: 10px;
+    }
+
+    .filter button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<div class="device-list">
+    <!-- Filter and Last Refreshed Time Container -->
+    <div class="filter-refresh-container">
+        <!-- Last Refreshed Time -->
+        <p>Last refreshed: <span id="lastRefreshedTime"></span></p>
+        <!-- Filter Form -->
+        <div class="filter">
+            <form id="filterForm" onsubmit="filterDevices(event)">
+                <select name="group" id="group">
+                    <option value="">All</option>
+                    <option value="Satcom Systems">Satcom Systems</option>
+                    <option value="Routers">Routers</option>
+                    <option value="Lab Network">Lab Network</option>
+                </select>
+                <button type="submit">Filter</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Device List -->
+    <ul>
+        {% for device in devices %}
+        <li>
+            <div class="device-info">
+                <div class="device-details">
+                    <h3>{{ device.display_name }}</h3>
+                    <p>IP: {{ device.ip }}</p>
+                </div>
+            </div>
+            <div class="status-container">
+                <p class="response-time"></p> <!-- Placeholder for response time -->
+                <i class="fas fa-circle status-icon {{ 'reachable' if device.ping_status else 'unreachable' }}"></i>
+                <button class="ping-button" onclick="pingDevice('{{ device.ip }}', this)">Ping</button>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+    // Function to ping a device and update its status
+    function pingDevice(deviceIp, buttonElement) {
+        fetch(`/ping_device/${deviceIp}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+        .then(data => {
+            const statusIconElement = buttonElement.previousElementSibling;
+            // Update status icon based on ping status
+            if (data.ping_status) {
+                statusIconElement.classList.add('reachable');
+                statusIconElement.classList.remove('unreachable');
+            } else {
+                statusIconElement.classList.add('unreachable');
+                statusIconElement.classList.remove('reachable');
+            }
+
+            // Update the response time
+            const responseTimeElement = buttonElement.parentElement.querySelector('.response-time');
+            responseTimeElement.textContent = `${data.ping_time.toFixed(1)} ms`;
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Function to update the last refreshed time
+    function updateLastRefreshedTime() {
+        var now = new Date();
+
+        // Get hours, minutes, and seconds
+        var hours = now.getHours().toString().padStart(2, '0');
+        var minutes = now.getMinutes().toString().padStart(2, '0');
+        var seconds = now.getSeconds().toString().padStart(2, '0');
+        
+        // Convert to 12-hour format
+        var period = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12; // Convert 0 to 12 for midnight
+        var timeString = hours.toString().padStart(2, '0') + ':' + minutes + ':' + seconds + ' ' + period;
+        
+        // Update the DOM element with id 'lastRefreshedTime'
+        var lastRefreshedElement = document.getElementById('lastRefreshedTime');
+        if (lastRefreshedElement) {
+            lastRefreshedElement.textContent = timeString;
+        }
+    }
+
+    // Initial call to display the last refreshed time
+    updateLastRefreshedTime();
+</script>
+
+{% endblock %}
