@@ -1,6 +1,12 @@
 # Lab Web Application
 
-This repository contains the code for a Flask-based web application that interfaces with relays for lab power controls and provides live video feeds of antennas.
+This project is a Flask-based web application designed for managing and monitoring networked devices, including lab equipment and SATCOM systems. The application provides real-time access to device information, control over relay states, live video feeds from RTSP cameras, and network monitoring via LibreNMS.
+
+**Power Controls**: Users can remotely control the state of relays, which are critical for managing various electrical circuits within the networked environment.
+
+**Live Video Feeds**: The application supports live streaming of video from RTSP cameras, providing users with a visual feed of SATCOM antennas.
+
+**Network Monitoring**: Integrated with LibreNMS, the application enables comprehensive network monitoring. It tracks device status, internet connectivity, and SNMP results.
 
 ## Project Structure
 
