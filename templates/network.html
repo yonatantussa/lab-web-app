@@ -150,6 +150,31 @@
     .filter button:hover {
         background-color: #0056b3;
     }
+
+    /* Smaller font size for last refreshed time and shrunk filter for mobile devices */
+    @media only screen and (max-width: 600px) {
+        .response-time {
+            font-size: 12px; /* Adjust font size as needed */
+        }
+        .filter-refresh-container p {
+            font-size: 12px; /* Smaller font size for the last refreshed time */
+        }
+        .filter select,
+        .filter button {
+            padding: 4px 8px; /* Adjust padding for mobile devices */
+            font-size: 12px; /* Adjust font size for mobile devices */
+        }
+
+        .filter select {
+            margin-right: 0px;
+            margin-left: 0px;
+        }
+
+        .filter button {
+            margin-right: 10px;
+            margin-left: 0px;
+        }
+    }
 </style>
 
 <div class="device-list">

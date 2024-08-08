@@ -8,6 +8,8 @@ This project is a Flask-based web application designed for managing and monitori
 
 **Network Monitoring**: Integrated with LibreNMS, the application enables comprehensive network monitoring. It tracks device status, internet connectivity, and SNMP results.
 
+**IP Subnet Calculator**: Users can calculate subnet information based on IP address and subnet mask represented in CIDR notation.
+
 ## Project Structure
 
 lab-webpage/
@@ -16,12 +18,14 @@ lab-webpage/
 │ └── (Static files like CSS, JS, images)
 │
 ├── templates/
-│ ├── index.html
-│ ├── power.html
+│ ├── base.html
 │ ├── feed.html
-│ └── network.html
+│ ├── index.html
+│ ├── network.html
+│ └── power.html
 │
 ├── app.py
+├── README.md
 └── requirements.txt
 
 ## Relay Functions
@@ -43,6 +47,9 @@ lab-webpage/
 * get_devices(): Fetches network device information from LibreNMS API.
 * update_network_info_background(): Updates network information periodically in the background.
 * ping_device(ip): Pings a device to check its availability.
+
+## Subnet Calculator Function
+* calculate_subnet(): Calculates subnet information based on IP address and subnet mask.
 
 ## Background Threads
 * thread_frames1: Thread for the first video feed.
@@ -66,6 +73,8 @@ lab-webpage/
 * '/network': Displays the network page.
 
 * '/ping_device/<device_ip>': Pings a device and returns the status.
+
+* '/calculate_subnet': Calculates subnet information based on IP address and subnet mask.
 
 ## Running the App
 ```python

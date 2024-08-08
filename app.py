@@ -7,6 +7,7 @@ import threading
 import time
 import json
 import subprocess
+import ipaddress
 
 # Initialize Flask app and blueprint
 app = Flask(__name__, static_url_path='/static')
@@ -307,6 +308,33 @@ def ping_device_route(device_ip):
     """
     is_pingable, ping_time = ping_device(device_ip)
     return jsonify({"ping_status": is_pingable, "ping_time": ping_time})
+
+@app.route('/calculate_subnet', methods=['POST'])
+def calculate_subnet():
+    data = request.json
+    ip = data.get('ip')
+    subnet = int(data.get('subnet'))
+
+    try:
+        network = ipaddress.IPv4Network(f"{ip}/{subnet}", strict=False)
+        network_address = network.network_address
+        broadcast_address = network.broadcast_address
+        subnet_mask = str(network.netmask)
+        usable_ips = list(network.hosts())
+        first_usable_ip = usable_ips[0] if usable_ips else None
+        last_usable_ip = usable_ips[-1] if usable_ips else None
+        
+        result = {
+            'ip': ip,
+            'subnet': subnet,
+            'network_address': str(network_address),
+            'broadcast': str(broadcast_address),
+            'usable_ip_range': str(first_usable_ip) + " - " + str(last_usable_ip),
+            'mask': str(subnet_mask)
+        }
+        return jsonify(result)
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
 
 # Register blueprint
 app.register_blueprint(views, url_prefix="")

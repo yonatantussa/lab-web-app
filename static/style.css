@@ -52,8 +52,9 @@ main {
     width: 100%;
 }
 
-.nav-item:last-child {
+.navbar-bottom {
     margin-top: auto;
+    width: 100%;
 }
 
 .nav-link {
@@ -135,6 +136,154 @@ main {
     fill: var(--text-secondary);
 }
 
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: var(--bg-primary);
+    margin: 10% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    margin-bottom: 50px;
+}
+
+.modal-content h2 {
+    color: var(--text-primary);
+    margin-top: 0;
+}
+
+.close-button {
+    color: var(--text-primary);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 0;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #7e7e7e;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.calculator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.keypad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#ipInput {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.2em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.keys {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.keys button {
+    padding: 15px;
+    font-size: 1.2em;
+    background-color: var(--text-primary);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.keys button:hover {
+    background-color: #7e7e7e;
+}
+
+.subnet-selector {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.subnet-selector label {
+    font-size: 1.2em;
+    color: var(--text-primary)
+}
+
+.subnet-selector select,
+.subnet-selector input[type="text"] {
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.subnet-selector input[type="text"]:focus,
+.subnet-selector select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.subnet-selector button {
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: var(--text-primary);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.subnet-selector button:hover {
+    background-color: #7e7e7e;
+}
+
+#subnetResult {
+    margin-top: 10px;
+    font-size: 1em;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.calculator .calculate {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.calculator .calculate:hover {
+    background-color: #218838;
+}
 
 @media only screen and (max-width: 600px) {
     .navbar {
@@ -142,7 +291,15 @@ main {
         width: 100vw;
         height: 5rem;
         z-index: 1000;
+        flex-direction: row;
     }   
+
+    .navbar-bottom {
+        display: flex; /* Ensure it uses flex layout */
+        flex-direction: row; /* Align items horizontally */
+        justify-content: center; /* Center items horizontally */
+        width: 100%; /* Full width */
+    }
 
     .navbar-nav {
         flex-direction: row;
@@ -163,7 +320,7 @@ main {
     }
 }
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 601px) {
     .navbar {
         top: 0;
         width: 5rem;
