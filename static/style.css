@@ -295,10 +295,10 @@ main {
     }   
 
     .navbar-bottom {
-        display: flex; /* Ensure it uses flex layout */
-        flex-direction: row; /* Align items horizontally */
-        justify-content: center; /* Center items horizontally */
-        width: 100%; /* Full width */
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        width: 100%;
     }
 
     .navbar-nav {
