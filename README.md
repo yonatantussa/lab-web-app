@@ -1,6 +1,6 @@
 # Lab Web Application
 
-This project is a Flask-based web application designed for managing and monitoring networked devices, including lab equipment and SATCOM systems. The application provides real-time access to device information, control over relay states, live video feeds from RTSP cameras, and network monitoring via LibreNMS.
+This project is a Flask-based web application designed for managing and monitoring network devices, including lab equipment and SATCOM systems. The application provides real-time access to device information, control over relay states, live video feeds from RTSP cameras, and network monitoring via LibreNMS.
 
 **Power Controls**: Users can remotely control the state of relays, which are critical for managing various configurations within the networked environment. New devices are automatically discovered and added.
 
