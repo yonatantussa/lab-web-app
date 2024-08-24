@@ -13,6 +13,7 @@ This project is a Flask-based web application designed for managing and monitori
 ## Project Structure
 
 lab-webpage/
+
 │
 ├── static/
 │ └── (Static files like CSS, JS, images)
