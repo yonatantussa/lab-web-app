@@ -10,7 +10,6 @@ This project is a Flask-based web application designed for managing and monitori
 
 **IP Subnet Calculator**: Users can calculate subnet information based on IP address and subnet mask represented in CIDR notation.
 
-![image](https://github.com/user-attachments/assets/61765d6d-6fd0-4560-b1bc-9257c99259a8)
 ![unnamed](https://github.com/user-attachments/assets/7d667bd2-c9ec-4204-ab8d-2d767ad6f77e)
 
 ## Project Structure
