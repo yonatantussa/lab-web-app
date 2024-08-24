@@ -12,21 +12,21 @@ This project is a Flask-based web application designed for managing and monitori
 
 ## Project Structure
 
-lab-webpage/
-│
-├── static/
-│ └── (Static files like CSS, JS, images)
-│
-├── templates/
-│ ├── base.html
-│ ├── feed.html
-│ ├── index.html
-│ ├── network.html
-│ └── power.html
-│
-├── app.py
-├── README.md
-└── requirements.txt
+lab-webpage/<br/>
+│<br/>
+├── static/<br/>
+│ └── (Static files like CSS, JS, images)<br/>
+│<br/>
+├── templates/<br/>
+│ ├── base.html<br/>
+│ ├── feed.html<br/>
+│ ├── index.html<br/>
+│ ├── network.html<br/>
+│ └── power.html<br/>
+│<br/>
+├── app.py<br/>
+├── README.md<br/>
+└── requirements.txt<br/>
 
 ## Relay Functions
 * get_relay_info: Fetches relay information from the given base URL and relay number.
