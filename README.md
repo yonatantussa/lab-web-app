@@ -13,10 +13,10 @@ This project is a Flask-based web application designed for managing and monitori
 ## Project Structure
 
 lab-webpage/<br/>
-│<br/>
-├── static/<br/>
+│ <br/>
+├── static/ <br/>
 │ └── (Static files like CSS, JS, images)<br/>
-│<br/>
+│ <br/>
 ├── templates/<br/>
 │ ├── base.html<br/>
 │ ├── feed.html<br/>
