@@ -6,7 +6,7 @@ This project is a Flask-based web application designed for managing and monitori
 
 **Live Video Feeds**: The application supports live streaming of video from RTSP cameras, providing users with a visual feed of SATCOM antennas.
 
-**Network Monitoring**: Integrated with LibreNMS, the application enables monitors the network of the lab environment. It tracks device status, internet connectivity, and SNMP results. New devices on the network are automatically discovered and added.
+**Network Monitoring**: Integrated with LibreNMS, the application monitors the network of the lab environment. It tracks device status, internet connectivity, and SNMP poll results. New devices on the network are automatically discovered and added.
 
 **IP Subnet Calculator**: Users can calculate subnet information based on IP address and subnet mask represented in CIDR notation.
 
